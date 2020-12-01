@@ -1,13 +1,13 @@
 doctype html
 html(lang="en")
-    title 这是layout的title
+    title RabbitGod
     link(rel="stylesheet", href="/components/bootstrap/dist/css/bootstrap.css")
     link(rel="stylesheet", href="/css/style.css")
     head
     body
     nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.mb-2
       .container
-        a.navbar-brand(href='/') 🐂的博客
+        a.navbar-brand(href='/') 在线编辑工具
         button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarsExample05', aria-controls='navbarsExample05', aria-expanded='false', aria-label='Toggle navigation')
           span.navbar-toggler-icon
         #navbarsExample05.collapse.navbar-collapse
@@ -17,7 +17,7 @@ html(lang="en")
                 span.sr-only (current)
             if user
                 li.nav-item
-                  a.nav-link(href='/articles/new') 新建文章
+                  a.nav-link(href='/articles/new') doc
           ul.navbar-nav.mr-right
             if user 
                 li.nav-item
@@ -38,7 +38,8 @@ html(lang="en")
         br
         hr
         footer
-            p Copyright &copy; 2018
+            p Copyright &copy; 2020-12-01 
+    script()
     script(src="/components/jquery/dist/jquery.min.js")
     script(src="/components/bootstrap/dist/js/bootstrap.js")
     script(src="/js/main.js")

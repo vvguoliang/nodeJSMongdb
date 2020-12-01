@@ -5,7 +5,8 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const passport = require('passport');
 const config = require('./config/database');
-
+const moment = require('moment');
+moment.locals('zh-cn')
 
 mongoose.connect(config.database,{useNewUrlParser:true});
 let db = mongoose.connection; // 创建一个连接放在db中

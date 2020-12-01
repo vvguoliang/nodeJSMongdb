@@ -15,7 +15,7 @@ router.get('/', function(req, res) {
 
 router.get('/new', ensureAuthenticated, function(req, res) {
     res.render('articles/new', {
-        title: '新增文章'
+        title: 'doc文档上传'
     });
 })
 
