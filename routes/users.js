@@ -8,7 +8,7 @@ let router = express.Router();
 router.get('/register', function(req, res) {
     res.render('users/register');
 });
-
+//注册
 router.post('/register', [
     check('name').isLength({min: 1}).withMessage('Name is required'),
     check('username').isLength({min: 1}).withMessage('Username is required'),
@@ -54,11 +54,11 @@ router.post('/register', [
 
     }
 })
-
+//登入
 router.get('/login', function(req, res) {
     res.render('users/login');
 });
-
+// 再次登入
 router.post('/login', function(req, res, next) {
     passport.authenticate('local', {
         successRedirect: '/',
@@ -67,7 +67,7 @@ router.post('/login', function(req, res, next) {
         successFlash: 'Welcome my blog!'
     })(req, res, next);
 });
-
+//退出
 router.get('/logout', function(req, res) {
     req.logout();
     req.flash('success','退出成功！')
