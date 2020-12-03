@@ -1,41 +1,38 @@
 // * 用户博客首页
 
-$(function () {
+$(function() {
 
-    $rightModule = $(".rightModule");//
+    $rightModule = $(".rightModule"); //
 
     var $registerBtn = $("#registerBtn");
     var $loginBtn = $("#loginBtn");
     var $logoutBtn = $("#logout");
     //绑定注册Button事件
-    $registerBtn.on('click', function () {
+    $registerBtn.on('click', function() {
         //调用API接口上传数据
         uploadRegisterDataFunc();
     });
     //绑定登录Button事件
-    $loginBtn.on('click', function () {
+    $loginBtn.on('click', function() {
         loginFunc();
     });
     //绑定注册面板--（马上登录）按钮事件，响应切换登录页面
-    $rightModule.find('.textRight').find('a').on('click', function () {
+    $rightModule.find('.textRight').find('a').on('click', function() {
         var thisTextName = $(this).attr('name');
         if (thisTextName === 'login') {
             $registerBtn.parents('.rightBox').addClass('boxHidden');
 
             $loginBtn.parents('.rightBox').removeClass('boxHidden');
-        }
-        else if (thisTextName === 'backLogin') {
+        } else if (thisTextName === 'backLogin') {
             $loginBtn.parents('.rightBox').addClass('boxHidden');
             $logoutBtn.parents('.rightBox').addClass('boxHidden');
             $registerBtn.parents('.rightBox').removeClass('boxHidden');
-        }
-        else if (thisTextName === 'logout') {
+        } else if (thisTextName === 'logout') {
             //退出登录相关处理
             logoutFunc();
-        }
-        else {
+        } else {
             //
-            alert('功能正在开发...');
+            alert('请跟管理人员联系');
         }
 
     });
@@ -67,18 +64,17 @@ function uploadRegisterDataFunc() {
                 repassword: repassword
             },
             dataType: 'json',
-            success: function (resData) {
+            success: function(resData) {
                 if (resData.code === '0') {
                     alert(resData.message);
                     //切换登录面板等
                     registerBox.addClass('boxHidden');
                     loginBox.removeClass('boxHidden');
-                }
-                else {
+                } else {
                     alert(resData.message);
                 }
             },
-            error: function () {
+            error: function() {
                 alert('Error');
             }
 
@@ -96,8 +92,7 @@ function loginFunc() {
     //取表单填写数据//
     if (username === '' || password === '') {
         alert('你的信息未填写完整...')
-    }
-    else {
+    } else {
         //采用 jQuery AJax方式上传
         $.ajax({
             type: 'post',
@@ -107,16 +102,15 @@ function loginFunc() {
                 password: password
             },
             dataType: 'json',
-            success: function (resData) {
+            success: function(resData) {
                 if (resData.code === '0') {
                     // alert(resData.message);
                     window.location.reload();
-                }
-                else {
+                } else {
                     alert(resData.message);
                 }
             },
-            error: function () {
+            error: function() {
                 alert('Error');
             }
 
@@ -135,7 +129,7 @@ function logoutFunc() {
         url: 'api/user/logout',
         data: {},
         dataType: 'json',
-        success: function (resData) {
+        success: function(resData) {
             // alert(resData);
             if (resData.code === '0') {
                 alert('你已成功退出系统');
@@ -150,7 +144,7 @@ function logoutFunc() {
 
 
         },
-        error: function (err) {
+        error: function(err) {
             alert(err);
         }
     });

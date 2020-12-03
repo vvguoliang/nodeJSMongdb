@@ -25,11 +25,11 @@
 var express = require('express');
 var routerAdmin = express.Router();
 
-var User = require('../models/User');//用户模型
-var Category = require('../models/Category');//分类模型
-var Content = require('../models/Content');//内容模型
+var User = require('../models/User'); //用户模型
+var Category = require('../models/Category'); //分类模型
+var Content = require('../models/Content'); //内容模型
 //
-routerAdmin.use(function (req, res, next) {
+routerAdmin.use(function(req, res, next) {
     //对进入用户身份进行验证
     if (!req.userInfo.isAdmin) {
         res.send('你不是管理员，不能访问后台管理！');
@@ -39,7 +39,7 @@ routerAdmin.use(function (req, res, next) {
 });
 
 //管理首页
-routerAdmin.get('/', function (req, res, next) {
+routerAdmin.get('/', function(req, res, next) {
     // res.send('后台管理首页');
     res.render('admin/adminIndex', {
         userInfo: req.userInfo
@@ -47,7 +47,7 @@ routerAdmin.get('/', function (req, res, next) {
 });
 
 //用户管理
-routerAdmin.get('/user', function (req, res, next) {
+routerAdmin.get('/user', function(req, res, next) {
     // 从数据库中读取所有用户数据
     /*
      *   sort() 可对字段指定排序 传值 -1降序 1 升序
@@ -70,12 +70,12 @@ routerAdmin.get('/user', function (req, res, next) {
     var pages = 0;
     var skip = (page - 1) * limit;
     //
-    User.count().then(function (count) {
+    User.count().then(function(count) {
         // console.log(count);
         //总页数
         pages = Math.ceil(count / limit);
         //
-        User.find().sort({_id: -1}).limit(limit).skip(skip).then(function (users) {
+        User.find().sort({ _id: -1 }).limit(limit).skip(skip).then(function(users) {
             // console.log(users);
             res.render('admin/user_index', {
                 userInfo: req.userInfo,
@@ -90,7 +90,7 @@ routerAdmin.get('/user', function (req, res, next) {
 
 });
 // *分类首页
-routerAdmin.get('/category', function (req, res, next) {
+routerAdmin.get('/category', function(req, res, next) {
     // 从数据库中读取所有分类数据
     var reqPage = Number((req.query.page) === undefined ? 0 : req.query.page);
     var page = reqPage <= 0 ? 1 : reqPage;
@@ -98,12 +98,12 @@ routerAdmin.get('/category', function (req, res, next) {
     var pages = 0;
     var skip = (page - 1) * limit;
     //
-    Category.count().then(function (count) {
+    Category.count().then(function(count) {
         // console.log(count);
         //总页数
         pages = Math.ceil(count / limit);
         //
-        Category.find().sort({_id: -1}).limit(limit).skip(skip).then(function (categories) {
+        Category.find().sort({ _id: -1 }).limit(limit).skip(skip).then(function(categories) {
             // console.log('分类首页回显数据  ' + categories);
             res.render('admin/category_index', {
                 userInfo: req.userInfo,
@@ -119,13 +119,13 @@ routerAdmin.get('/category', function (req, res, next) {
 
 });
 //分类添加页面
-routerAdmin.get('/category/add', function (req, res, next) {
+routerAdmin.get('/category/add', function(req, res, next) {
     res.render('admin/category_add', {
         userInfo: req.userInfo
     });
 });
 //分类添加数据上传
-routerAdmin.post('/category/add', function (req, res, next) {
+routerAdmin.post('/category/add', function(req, res, next) {
     // console.log(req.body);
     var name = req.body.name || '';
     if (name === '') {
@@ -134,26 +134,24 @@ routerAdmin.post('/category/add', function (req, res, next) {
             message: '名称不能为空',
             url: ''
         });
-    }
-    else {
+    } else {
         //名称部位空//验证数据库只能怪是否存在
         Category.findOne({
             name: name
-        }).then(function (resData) {
+        }).then(function(resData) {
             if (resData) {
                 //数据库中已经存在
                 res.render('admin/error', {
                     userInfo: req.userInfo,
                     message: '分类已经存在'
                 });
-            }
-            else {
+            } else {
                 //不存在则写入数据
                 return new Category({
                     name: name
                 }).save();
             }
-        }).then(function (newCategory) {
+        }).then(function(newCategory) {
             //返回新的分类数据
             res.render('admin/success', {
                 userInfo: req.userInfo,
@@ -166,12 +164,12 @@ routerAdmin.post('/category/add', function (req, res, next) {
 
 });
 //分类编辑
-routerAdmin.get('/category/edit', function (req, res) {
+routerAdmin.get('/category/edit', function(req, res) {
     //获取要修改的数据//以表单形式展现出来
     var id = req.query.id || '';
     Category.findOne({
         _id: id
-    }).then(function (category) {
+    }).then(function(category) {
         if (!category) {
             res.render('admin/error', {
                 userInfo: req.userInfo,
@@ -179,8 +177,7 @@ routerAdmin.get('/category/edit', function (req, res) {
             });
             // Promise.reject(reason)方法返回一个用reason拒绝的Promise
             return Pramise.reject();
-        }
-        else {
+        } else {
             res.render('admin/category_edit', {
                 userInfo: req.userInfo,
                 category: category
@@ -190,7 +187,7 @@ routerAdmin.get('/category/edit', function (req, res) {
 
 });
 //分类修改 保存
-routerAdmin.post('/category/edit', function (req, res) {
+routerAdmin.post('/category/edit', function(req, res) {
     //获取要修改的分类信息
     var id = req.query.id || '';
     //获取Post提交过来的 修改的名称
@@ -199,15 +196,14 @@ routerAdmin.post('/category/edit', function (req, res) {
     //判断数据库是否已有
     Category.findOne({
         _id: id
-    }).then(function (category) {
+    }).then(function(category) {
         if (!category) {
             res.render('admin/error', {
                 userInfo: req.userInfo,
                 message: '分类信息不存在'
             });
             return Pramise.reject();
-        }
-        else {
+        } else {
             // 当用户没有做任何修改提交时候 判断处理【可放在前端判断】
             if (newName === category.name) {
                 res.render('admin/error', {
@@ -215,35 +211,32 @@ routerAdmin.post('/category/edit', function (req, res) {
                     message: '修改成功',
                     url: '/admin/category'
                 });
-            }
-            else {
+            } else {
                 //要修改的分类名称是否在数据库中已存在
                 return Category.findOne({
-                    _id: {$ne: id},
+                    _id: { $ne: id },
                     name: newName
                 });
             }
 
         }
-    }).then(function (sameCategory) {
+    }).then(function(sameCategory) {
         if (sameCategory) {
             res.render('admin/error', {
                 userInfo: req.userInfo,
                 message: '数据库中已经存在同名分类',
             });
             return Pramise.reject();
-        }
-        else {
+        } else {
             return Category.update({
-                    //条件-当前ID
-                    _id: id
-                }, {
-                    //修改的内容- 更新的名称
-                    name: newName
-                }
-            );
+                //条件-当前ID
+                _id: id
+            }, {
+                //修改的内容- 更新的名称
+                name: newName
+            });
         }
-    }).then(function () {
+    }).then(function() {
         res.render('admin/success', {
             userInfo: req.userInfo,
             message: '修改成功',
@@ -254,12 +247,12 @@ routerAdmin.post('/category/edit', function (req, res) {
 
 });
 //分类删除
-routerAdmin.get('/category/delete', function (req, res) {
+routerAdmin.get('/category/delete', function(req, res) {
     //获取要删除的分类ID
     var id = req.query.id || '';
     Category.remove({
         _id: id
-    }).then(function () {
+    }).then(function() {
         res.render('admin/success', {
             userInfo: req.userInfo,
             message: '删除成功',
@@ -268,7 +261,7 @@ routerAdmin.get('/category/delete', function (req, res) {
     });
 });
 //内容管理首页
-routerAdmin.get('/content', function (req, res, next) {
+routerAdmin.get('/content', function(req, res, next) {
     // res.render('admin/content_index',{});
     // 从数据库中读取所有分类数据
     var reqPage = Number((req.query.page) === undefined ? 0 : req.query.page);
@@ -277,12 +270,12 @@ routerAdmin.get('/content', function (req, res, next) {
     var pages = 0;
     var skip = (page - 1) * limit;
     //
-    Content.count().then(function (count) {
+    Content.count().then(function(count) {
         // console.log(count);
         //总页数
         pages = Math.ceil(count / limit);
         //
-        Content.find().sort({addTime: -1}).limit(limit).skip(skip).populate('category').then(function (contents) {
+        Content.find().sort({ addTime: -1 }).limit(limit).skip(skip).populate('category').then(function(contents) {
             // console.log('分类首页回显数据' + contents);
             res.render('admin/content_index', {
                 userInfo: req.userInfo,
@@ -296,9 +289,9 @@ routerAdmin.get('/content', function (req, res, next) {
     });
 });
 //内容添加
-routerAdmin.get('/content/add', function (req, res, next) {
+routerAdmin.get('/content/add', function(req, res, next) {
     //内容添加//下拉选择分类//从数据库取出分类数据
-    Category.find().sort({_id: -1}).then(function (categories) {
+    Category.find().sort({ _id: -1 }).then(function(categories) {
         res.render('admin/content_add', {
             userInfo: req.userInfo,
             categories: categories
@@ -307,7 +300,7 @@ routerAdmin.get('/content/add', function (req, res, next) {
 });
 
 //内容添加 数据上传
-routerAdmin.post('/content/add', function (req, res, next) {
+routerAdmin.post('/content/add', function(req, res, next) {
     //
     var postData = req.body;
     // console.log('添加内容传入的数据' + postData.category);
@@ -320,8 +313,7 @@ routerAdmin.post('/content/add', function (req, res, next) {
             message: '有未填写的信息'
         });
         return;
-    }
-    else {
+    } else {
         //数据写入到数据库
         var newContent = new Content({
             category: postData.category,
@@ -331,7 +323,7 @@ routerAdmin.post('/content/add', function (req, res, next) {
             content: postData.content
         });
         // console.log(newContent);
-        newContent.save().then(function (rs) {
+        newContent.save().then(function(rs) {
             res.render('admin/success', {
                 userInfo: req.userInfo,
                 message: '内容数据保存成功',
@@ -346,15 +338,15 @@ routerAdmin.post('/content/add', function (req, res, next) {
  * 修改内容
  * */
 
-routerAdmin.get('/content/edit', function (req, res, next) {
+routerAdmin.get('/content/edit', function(req, res, next) {
     //
     var id = req.query.id || '';
     var resCategories = {};
-    Category.find().sort({_id: -1}).then(function (categories) {
+    Category.find().sort({ _id: -1 }).then(function(categories) {
         resCategories = categories;
         return Content.findOne({
             _id: id
-        }).populate('category').then(function (content) {
+        }).populate('category').then(function(content) {
             if (!content) {
                 res.render('admin/error', {
                     userInfo: req.userInfo,
@@ -362,8 +354,7 @@ routerAdmin.get('/content/edit', function (req, res, next) {
                 });
                 // Promise.reject(reason)方法返回一个用reason拒绝的Promise
                 return Pramise.reject();
-            }
-            else {
+            } else {
                 res.render('admin/content_edit', {
                     userInfo: req.userInfo,
                     categories: resCategories,
@@ -376,7 +367,7 @@ routerAdmin.get('/content/edit', function (req, res, next) {
 });
 
 //保存修改内容
-routerAdmin.post('/content/edit', function (req, res, next) {
+routerAdmin.post('/content/edit', function(req, res, next) {
     //
     var id = req.query.id || '';
     var postData = req.body;
@@ -389,8 +380,7 @@ routerAdmin.post('/content/edit', function (req, res, next) {
             message: '有未填写的信息'
         });
         return;
-    }
-    else {
+    } else {
         //保存数据到数据库
         Content.update({
             //条件
@@ -401,7 +391,7 @@ routerAdmin.post('/content/edit', function (req, res, next) {
             title: postData.title,
             description: postData.description,
             content: postData.content
-        }).then(function () {
+        }).then(function() {
             res.render('admin/success', {
                 userInfo: req.userInfo,
                 message: '内容数据修改成功',
@@ -414,12 +404,12 @@ routerAdmin.post('/content/edit', function (req, res, next) {
 
 });
 //内容删除
-routerAdmin.get('/content/delete', function (req, res, next) {
+routerAdmin.get('/content/delete', function(req, res, next) {
     var id = req.query.id || '';
     Content.remove({
         //删除的条件
         _id: id
-    }).then(function () {
+    }).then(function() {
         res.render('admin/success', {
             userInfo: req.userInfo,
             message: '删除成功',
@@ -428,15 +418,10 @@ routerAdmin.get('/content/delete', function (req, res, next) {
     });
 });
 
-
 //退出
-routerAdmin.get('/logout', function (req, res) {
+routerAdmin.get('/logout', function(req, res) {
     req.cookies.set('userInfo', null);
     res.render('main/mainIndex', {});
 });
 
 module.exports = routerAdmin;
-
-
-
-
