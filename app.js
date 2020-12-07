@@ -6,15 +6,18 @@ var express = require('express');
 var swig = require('swig');
 var path = require('path');
 var mongoose = require('mongoose');
-var bodyParser = require('body-parser');//中间件/可从request中获取body数据
+var bodyParser = require('body-parser'); //中间件/可从request中获取body数据
 var Cookies = require('cookies');
 var User = require('./models/User');
-//创建app应用 ==> NodeJS Http.createServer();
+var os = require('os')
+    //创建app应用 ==> NodeJS Http.createServer();
 var app = express();
 //设置静态文件托管
 //当用户访问Url 以/public开始，那么直接返回对应 _dirname + '/public'下的文件
 // app.use(express.static(path.join(__dirname,'public')));
 app.use('/public', express.static(__dirname + '/public'));
+
+app.use('/dist', express.static(__dirname + '/dist'));
 
 //配置应用模板
 //定义当前应用所使用的模板引擎
@@ -39,7 +42,7 @@ swig.setDefaults({ cache: false });
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 //设置cookie
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
     req.cookies = new Cookies(req, res);
     // console.log('这里打印服务端返回客户端的cookies  ' + req.cookies.get('userInfo'));
     //解析用户登录的cookies信息
@@ -49,18 +52,16 @@ app.use(function (req, res, next) {
             req.userInfo = JSON.parse(req.cookies.get('userInfo'));
             //获取当前登录用户的类型//是否是管理员
             //只有超级管理员可以进行//用户管理//普通用户//只能进行模块//内容//留言等管理
-            User.findById(req.userInfo._id).then(function (userInfo) {
+            User.findById(req.userInfo._id).then(function(userInfo) {
                 req.userInfo.isAdmin = Boolean(userInfo.isAdmin);
                 req.userInfo.isSuperAdmin = Boolean(userInfo.isSuperAdmin);
                 next();
             });
-        }
-        catch (e) {
+        } catch (e) {
             // console.log('Cookies have some Error');
             // next();
         }
-    }
-    else {
+    } else {
         // console.log('不存在用户cookie 数据！');
         next();
     }
@@ -90,10 +91,28 @@ mongoose.connect('mongodb://localhost:27017/iBlog', { useMongoClient: true });
 var db = mongoose.connection
 
 db.on('error', console.error.bind(console, '连接错误:'));
-db.once('open', function () {
-    console.log('连接成功');
-    app.listen(8081, 'localhost');
-    console.log('Server is running at http://localhost:8081');
-})
-// app.listen(8081, 'localhost');
-// console.log('Server is running at http://localhost:8081');
+db.once('open', function() {
+        console.log('连接成功' + getIPv4());
+        app.listen(8080, getIPv4());
+        console.log("Server is running at http://" + getIPv4() + ":8080");
+    })
+    // app.listen(8081, 'localhost');
+    // console.log('Server is running at http://localhost:8081');
+
+function getIPv4() {
+    var interfaces = os.networkInterfaces(); //获取网络接口列表
+    var ipv4s = []; //同一接口可能有不止一个IP4v地址，所以用数组存
+
+    Object.keys(interfaces).forEach(function(key) {
+        interfaces[key].forEach(function(item) {
+            //跳过IPv6 和 '127.0.0.1'
+            if ('IPv4' !== item.family || item.internal !== false) return;
+            if (key === 'WLAN') {
+                ipv4s.push(item.address); //可用的ipv4s加入数组
+                console.log(key + '--' + item.address);
+            }
+        })
+    })
+
+    return ipv4s[0]; //返回一个可用的即可
+}

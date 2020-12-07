@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>RabbitGod</title>
+    <link rel="stylesheet" href="../../public/plug-in/bootstrap-3.3.7/css/bootstrap.css">
+    <link rel="stylesheet" href="../../public/plug-in/bootstrap-3.3.7/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="../../public/css/Login.css">
+    <link href="/dist/xspreadsheet.css" rel="stylesheet">
+</head>
+
+<body onload="load()">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/admin">后台管理</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ userInfo.username }} <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/admin/logout">退出</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="RabbitGod"></div>
+    <script>
+        function load() {
+            const rows10 = {
+                len: 1000
+            };
+            for (let i = 0; i < 1000; i += 1) {
+                rows10[i] = {
+                    cells: {
+                        0: {
+                            text: 'A-' + i
+                        },
+                        1: {
+                            text: 'B-' + i
+                        },
+                        2: {
+                            text: 'C-' + i
+                        },
+                        3: {
+                            text: 'D-' + i
+                        },
+                        4: {
+                            text: 'E-' + i
+                        },
+                        5: {
+                            text: 'F-' + i
+                        },
+                    }
+                };
+            }
+            var xs = x_spreadsheet('#RabbitGod', {
+                    showToolbar: true,
+                    showGrid: true
+                })
+                .loadData([{}, {}]).change((cdata) => {});
+
+            xs.on('cell-selected', (cell, ri, ci) => {
+                console.log('cell:', cell, ', ri:', ri, ', ci:', ci);
+            }).on('cell-edited', (text, ri, ci) => {
+                console.log('text:', text, ', ri: ', ri, ', ci:', ci);
+            });
+
+            setTimeout(() => {}, 5000);
+        }
+    </script>
+    <script type="text/javascript" src="../../public/plug-in/jquery-3.1.1.js"></script>
+    <script type="text/javascript" src="../../public/plug-in/bootstrap-3.3.7/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/dist/xspreadsheet.js"></script>
+</body>
+
+</html>

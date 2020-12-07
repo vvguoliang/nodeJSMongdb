@@ -87,7 +87,6 @@ routerAdmin.get('/user', function(req, res, next) {
             });
         });
     });
-
 });
 // *分类首页
 routerAdmin.get('/category', function(req, res, next) {
@@ -414,6 +413,49 @@ routerAdmin.get('/content/delete', function(req, res, next) {
             userInfo: req.userInfo,
             message: '删除成功',
             url: '/admin/content'
+        });
+    });
+});
+
+//newexcel
+routerAdmin.get('/newexcel', function(req, res, next) {
+    // 从数据库中读取所有用户数据
+    /*
+     *   sort() 可对字段指定排序 传值 -1降序 1 升序
+     *   对数据进行分页
+     *   limit(number) 限制从数据库中取出条数
+     *   skip(number) 忽略数据的条数
+     *
+     *   eg:每页显示2条
+     *   第一页：1-2 skip 0  -> 当前页 -1 * limit
+     *   第二页：3-4 skip 2 ->
+     *   ...
+     *
+     * */
+    // var page = 1;
+    // console.log(req.query.page);
+    var reqPage = Number((req.query.page) === undefined ? 0 : req.query.page);
+    // console.log(reqPage);
+    var page = reqPage <= 0 ? 1 : reqPage;
+    var limit = 2;
+    var pages = 0;
+    var skip = (page - 1) * limit;
+    //
+    User.count().then(function(count) {
+        // console.log(count);
+        //总页数
+        pages = Math.ceil(count / limit);
+        //
+        User.find().sort({ _id: -1 }).limit(limit).skip(skip).then(function(users) {
+            // console.log(users);
+            res.render('../dist/index', {
+                userInfo: req.userInfo,
+                users: users,
+                count: count,
+                limit: limit,
+                pages: pages,
+                page: page
+            });
         });
     });
 });
