@@ -93,7 +93,7 @@ var db = mongoose.connection
 db.on('error', console.error.bind(console, '连接错误:'));
 db.once('open', function() {
         console.log('连接成功' + getIPv4());
-        app.listen(8080, getIPv4());
+        app.listen(8080, '127.0.0.1');
         console.log("Server is running at http://" + getIPv4() + ":8080");
     })
     // app.listen(8081, 'localhost');

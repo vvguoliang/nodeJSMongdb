@@ -3,36 +3,31 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
     <title>RabbitGod</title>
     <link rel="stylesheet" href="../../public/plug-in/bootstrap-3.3.7/css/bootstrap.css">
-    <link rel="stylesheet" href="../../public/plug-in/bootstrap-3.3.7/css/bootstrap-theme.css">
+    <!-- <link rel="stylesheet" href="../../public/plug-in/bootstrap-3.3.7/css/bootstrap-theme.css"> -->
     <link rel="stylesheet" href="../../public/css/Login.css">
     <link href="/dist/xspreadsheet.css" rel="stylesheet">
 </head>
 
 <body onload="load()">
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <a class="navbar-brand" href="/admin">后台管理</a>
-            </div>
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ userInfo.username }} <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/admin/logout">退出</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <div id="RabbitGod"></div>
+    <!-- <nav class="navbar navbar-default">
+        <div class="container-fluid"> -->
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <a href="/admin" style="color: aliceblue; font-size: 14px;">后台管理</a>
+        <li class="dropdown nav pull-right">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="color: aliceblue; font-size: 14px;">{{ userInfo.username }} <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                <li><a href="/admin/logout">退出</a></li>
+            </ul>
+        </li>
+    </div>
+    <!-- </div>
+    </nav> -->
+    <footer>
+        <div id="RabbitGod" style="margin-bottom: -100px;"></div>
+    </footer>
     <script>
         function load() {
             const rows10 = {
@@ -73,7 +68,6 @@
             }).on('cell-edited', (text, ri, ci) => {
                 console.log('text:', text, ', ri: ', ri, ', ci:', ci);
             });
-
             setTimeout(() => {}, 5000);
         }
     </script>
