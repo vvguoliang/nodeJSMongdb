@@ -1,0 +1,159 @@
+<!--继承 layout 模板 复用头部尾部等页面区域-->
+{% extends 'layout.html' %}
+
+{% block main %}
+<div class="jumbotron">
+    <!--用户列表-->
+    <ol class="breadcrumb">
+        <li><a href="#">内容首页</a></li>
+        <li><span></span>内容添加</li>
+    </ol>
+    <hr>
+    <h5>添加上传内容:</h5>
+    <hr>
+    <form method="post">
+        <div class="form-group">
+            <label for=" title">第一名字</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="请输入标题">
+        </div>
+        <div class="form-group">
+            <label for=" title">第二名字</label>
+            <input type="text" class="form-control" id="description" name="description" placeholder="请输入简介" />
+        </div>
+        <div class="form-group">
+            <label for="title">第三名字</label>
+            <input type="text" class="form-control" id="content" name="content" placeholder="请输入内容..." />
+        </div>
+        <div class="form-group" style="float:left">
+            <li class="dropdown">
+                <a id="type1" data-toggle="dropdown" role="button">类型I <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a onclick="onType11('交通')">交通</a></li>
+                    <li><a onclick="onType11('军事')">军事</a></li>
+                    <li><a onclick="onType11('城市')">城市</a></li>
+                    <li><a onclick="onType11('室内')">室内</a></li>
+                    <li><a onclick="onType11('植被')">植被</a></li>
+                </ul>
+            </li>
+        </div>
+        <div class="form-group" style="float:left;margin-left: 20px;">
+            <li class="dropdown">
+                <a id="type2" data-toggle="dropdown" role="button" onclick="onType2()">类型II <span
+                        class="caret"></span></a>
+                <ul class="dropdown-menu" id="type3">
+                    <!-- 
+                    <li><a>汽车</a></li>
+                    <li><a>船</a></li>
+                    <li><a>飞机</a></li>
+                    <li><a>单兵</a></li>
+                    <li><a>坦克</a></li>
+                    <li><a>导弹</a></li>
+                    <li><a>战机</a></li>
+                    <li><a>装甲车</a></li>
+                    <li><a>驱逐舰</a></li>
+                    <li><a>地标建筑</a></li>
+                    <li><a>建筑</a></li>
+                    <li><a>护栏</a></li>
+                    <li><a>标识牌</a></li>
+                    <li><a>路灯</a></li>
+                    <li><a>道路</a></li>
+                    <li><a>桌椅</a></li>
+                    <li><a>家电</a></li>
+                    <li><a>沙发</a></li>
+                    <li><a>岩石</a></li>
+                    <li><a>树木</a></li>
+                    <li><a>花草</a></li> -->
+                </ul>
+            </li>
+        </div>
+        <div class="form-group" style="float:left;margin-left: 20px;">
+            <li class="dropdown">
+                <a id="type4" data-toggle="dropdown" role="button">类型III <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a onclick="onType41('Windows')">Windows</a></li>
+                    <li><a onclick="onType41('Android')">Android</a></li>
+                    <li><a onclick="onType41('iOS')">iOS</a></li>
+                </ul>
+            </li>
+        </div>
+        <div class="form-group" style="float:left;margin-left: 30%;">
+            <label for="title">上传图片</label>
+            <input type="file" name='image' id="imagelist" style="width: 200px; height: 50px;">
+            <img src="../../public/images/main/A2.jpg" id="img" style="width: 200px;height: 200px;">
+        </div>
+        <div class="form-group" style="float:left;margin-left: 20px;">
+            <label for="title">上传文件</label>
+            <input type="file" name='image' id="imagelist" style="width: 200px; height: 50px;">
+            <img src="../../public/images/main/A2.jpg" id="img" style="width: 200px;height: 200px;">
+        </div>
+        <button type="submit" class="btn btn-default" style="float: right;border:1px">提交</button>
+    </form>
+</div>
+<script>
+    var fileEle = document.getElementById('imagelist');
+    var imgEle = document.getElementById('img');
+    fileEle.onchange = function (e) {
+        var file1 = e.target.files[0];
+        var url1 = window.URL.createObjectURL(file1);
+        imgEle.src = url1;
+    }
+    function preView(url) {
+        let reader = new FileReader();
+
+        getImageBlob(url, function (blob) {
+            reader.readAsDataURL(blob);
+        });
+
+        reader.onload = function (e) {
+            var img = document.createElement("img");
+            img.src = e.target.result;
+            document.body.appendChild(img);
+        }
+    }
+
+    //获取图片的Blob值
+    function getImageBlob(url, cb) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("get", url, true);
+        xhr.responseType = "blob";
+        xhr.onload = function () {
+            if (this.status == 200) {
+                if (cb) cb(this.response);
+            }
+        };
+        xhr.send();
+    }
+
+    function onType2() {
+        var type1 = document.getElementById('type1').innerHTML;
+        type1 = type1.substring(0, 2);
+        if (type1.indexOf("类型") !== -1) {
+            alert("类型I 没有选择");
+        } else {
+            if (type1 === "交通") {
+                document.getElementById('type3').innerHTML = "<li><a onclick=" + "onType21('汽车')" + ">汽车</a></li><li><a onclick=" + "onType21('船')" + ">船</a></li><li><a onclick=" + "onType21('飞机')" + ">飞机</a></li>";
+            } else if (type1 === "军事") {
+                document.getElementById('type3').innerHTML = "<li><a onclick=" + "onType21('单兵')" + ">单兵</a></li><li><a onclick=" + "onType21('坦克')" + ">坦克</a></li><li><a onclick=" + "onType21('导弹')" + ">导弹</a></li><li><a onclick=" + "onType21('战机')" + ">战机</a></li><li><a onclick=" + "onType21('装甲车')" + ">装甲车</a></li><li><a onclick=" + "onType21('驱逐舰')" + ">驱逐舰</a></li>";
+            } else if (type1 === "城市") {
+                document.getElementById('type3').innerHTML = "<li><a onclick=" + "onType21('地标建筑')" + ">地标建筑</a></li><li><a onclick=" + "onType21('建筑')" + ">建筑</a></li><li><a onclick=" + "onType21('护栏')" + ">护栏</a></li><li><a onclick=" + "onType21('标识牌')" + ">标识牌</a></li><li><a onclick=" + "onType21('路灯')" + ">路灯</a></li><li><a onclick=" + "onType21('道路')" + ">道路</a></li>";
+            } else if (type1 === "室内") {
+                document.getElementById('type3').innerHTML = "<li><a onclick=" + "onType21('桌椅')" + ">桌椅</a></li><li><a onclick=" + "onType21('家电')" + ">家电</a></li><li><a onclick=" + "onType21('沙发')" + ">沙发</a></li>";
+            } else if (type1 === "植被") {
+                document.getElementById('type3').innerHTML = "<li><a onclick=" + "onType21('岩石')" + ">岩石</a></li><li><a onclick=" + "onType21('树木')" + ">树木</a></li><li><a onclick=" + "onType21('花草')" + ">花草</a></li>"
+            }
+        }
+    }
+
+    function onType11(string) {
+        document.getElementById('type1').innerHTML = string + "  <span class='caret'></span>";
+    }
+
+    function onType21(string) {
+        document.getElementById('type2').innerHTML = string + "  <span class='caret'></span>";
+    }
+
+    function onType41(string) {
+        document.getElementById('type4').innerHTML = string + "  <span class='caret'></span>";
+    }
+</script>
+{% endblock %}

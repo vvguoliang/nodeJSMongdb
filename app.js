@@ -17,8 +17,7 @@ var app = express();
 // app.use(express.static(path.join(__dirname,'public')));
 app.use('/public', express.static(__dirname + '/public'));
 
-app.use('/dist', express.static(__dirname + '/dist'));
-
+// app.use('/dist', express.static(__dirname + '/dist')); 
 //配置应用模板
 //定义当前应用所使用的模板引擎
 /*
