@@ -24,6 +24,10 @@
 
 var express = require('express');
 var routerAdmin = express.Router();
+const fs = require('fs');
+const path = require('path');
+//上传图片的模板
+var multer = require('multer');
 
 var User = require('../models/User'); //用户模型
 var Category = require('../models/Category'); //分类模型
@@ -449,36 +453,71 @@ routerAdmin.get('/fileManagement', function (req, res, next) {
     });
 });
 
+//上传文件
+routerAdmin.get('/file/upload', function (req, res, next) {
+    //内容添加//下拉选择分类//从数据库取出分类数据
+    FileMangement.find().sort({ _id: -1 }).then(function (fileManagements) {
+        res.render('admin/file_upload', {
+            userInfo: req.userInfo,
+            fileManagements: fileManagements
+        });
+    });
+});
 
+//生成的图片放入uploads文件夹下
+var upload = multer({ dest: 'E:/U3D/' })
+//接口上传图片放置位置
+routerAdmin.post("/filepath", upload.single('test'), function (req, res, next) {
+    //读取文件路径
+    fs.readFile(req.file.path, (err, data) => {
+        //如果读取失败
+        if (err) { return res.send('上传失败') }
+        //如果读取成功
+        //声明图片名字为时间戳和随机数拼接成的，尽量确保唯一性
+        let time = Date.now() + parseInt(Math.random() * 999) + parseInt(Math.random() * 2222);
+        //拓展名
+        let extname = req.file.mimetype.split('/')[1]
+        //拼接成图片名
+        let keepname = time + '.' + extname
+        //三个参数
+        //1.图片的绝对路径
+        //2.写入的内容
+        //3.回调函数
+        fs.writeFile(path.join(__dirname, 'E:/U3D/' + keepname), data, (err) => {
+            if (err) { return res.send('写入失败') }
+            res.send({ err: 0, msg: '上传ok' })
+        });
+    });
+});
 //上传文件
 routerAdmin.post('/file/upload', function (req, res, next) {
 
     var postData = req.body;
-
-    if (postData.filename === '' || postData.title === '' || postData.content === '') {
+    console.log("titleName:" + postData.titleName + "==assetName:" + postData.assetName + "==type1:" + postData.type1 + "==type2:" + postData.type2 + "==platform:" + postData.platform + "==filename:" + postData.filename);
+    if (postData.titleName === '' || postData.assetName === '' || postData.type1 === '' || postData.type2 === '' || postData.platform === '' || postData.filename === '') {
         res.render('admin/error', {
             userInfo: req.userInfo,
             message: '有未填写的信息'
         });
         return;
     } else {
-        //保存数据到数据库
-        FileMangement.update({
-            //更新的数据字段
-            username: postData.category,
-            filename: postData.filename,
-            titleName: postData.titleName,
-            assetName: postData.assetName,
-            type1: postData.type1,
-            type2: postData.type2,
-            platform: postData.platform
-        }).then(function () {
-            res.render('admin/success', {
-                userInfo: req.userInfo,
-                message: '上传成功',
-                url: '/admin/file_upload'
-            });
-        });
+        // //保存数据到数据库
+        // FileMangement.update({
+        //     //更新的数据字段
+        //     username: req.userInfo.username,
+        //     filename: postData.filename,
+        //     titleName: postData.titleName,
+        //     assetName: postData.assetName,
+        //     type1: postData.type1,
+        //     type2: postData.type2,
+        //     platform: postData.platform
+        // }).then(function () {
+        // res.render('admin/success', {
+        //     userInfo: req.userInfo,
+        //     message: '上传成功',
+        //     url: '/admin/file_upload'
+        // });
+        // });
     }
 });
 

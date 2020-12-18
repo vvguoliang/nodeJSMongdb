@@ -72,6 +72,8 @@ app.use('/', require('./routers/main'));
 app.use('/admin', require('./routers/admin'));
 app.use('/user', require('./routers/users'));
 app.use('/api', require('./routers/api'));
+app.use(bodyParser.json({ limit: '100mb' }));
+app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 
 
 //监听Http请求  XXX端口的信息数据
@@ -86,7 +88,7 @@ app.use('/api', require('./routers/api'));
 //         console.log('Server is running at http://localhost:8081');
 //     }
 // });
-mongoose.connect('mongodb://localhost:27017/RabbitGod', { useMongoClient: true });
+mongoose.connect('mongodb://localhost:27017/RabbitGod', { useNewUrlParser: true });
 var db = mongoose.connection
 
 db.on('error', console.error.bind(console, '连接错误:'));

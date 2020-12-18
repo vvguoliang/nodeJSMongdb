@@ -13,21 +13,20 @@
     <hr>
     <form method="post">
         <div class="form-group">
-            <label for=" title">第一名字</label>
-            <input type="text" class="form-control" id="title" name="title" placeholder="请输入标题">
+            <label for=" title">类型I Name</label>
+            <input type="text" class="form-control" id="title" autocomplete="off" name="titleName"
+                placeholder="请输入类型I titleName">
         </div>
         <div class="form-group">
-            <label for=" title">第二名字</label>
-            <input type="text" class="form-control" id="description" name="description" placeholder="请输入简介" />
-        </div>
-        <div class="form-group">
-            <label for="title">第三名字</label>
-            <input type="text" class="form-control" id="content" name="content" placeholder="请输入内容..." />
+            <label for=" title">类型II Name</label>
+            <input type="text" class="form-control" id="description" autocomplete="off" name="assetName"
+                placeholder="请输入类型II assetName" />
         </div>
         <div class="form-group" style="float:left">
             <li class="dropdown">
-                <a id="type1" data-toggle="dropdown" role="button">类型I <span class="caret"></span></a>
-                <ul class="dropdown-menu">
+                <input type="text" id="type1" data-toggle="dropdown" role="button" autocomplete="off" name="type1"
+                    placeholder="类型I" style="width: 55px;" />
+                <ul class=" dropdown-menu">
                     <li><a onclick="onType11('交通')">交通</a></li>
                     <li><a onclick="onType11('军事')">军事</a></li>
                     <li><a onclick="onType11('城市')">城市</a></li>
@@ -38,8 +37,8 @@
         </div>
         <div class="form-group" style="float:left;margin-left: 20px;">
             <li class="dropdown">
-                <a id="type2" data-toggle="dropdown" role="button" onclick="onType2()">类型II <span
-                        class="caret"></span></a>
+                <input type="text" id="type2" data-toggle="dropdown" role="button" onclick="onType2()"
+                    autocomplete="off" name="type2" placeholder="类型II" style="width: 90px;" />
                 <ul class="dropdown-menu" id="type3">
                     <!-- 
                     <li><a>汽车</a></li>
@@ -68,7 +67,8 @@
         </div>
         <div class="form-group" style="float:left;margin-left: 20px;">
             <li class="dropdown">
-                <a id="type4" data-toggle="dropdown" role="button">类型III <span class="caret"></span></a>
+                <input type="text" id="type4" data-toggle="dropdown" role="button" autocomplete="off" name="platform"
+                    placeholder="类型III" style="width: 90px;" />
                 <ul class="dropdown-menu">
                     <li><a onclick="onType41('Windows')">Windows</a></li>
                     <li><a onclick="onType41('Android')">Android</a></li>
@@ -79,54 +79,51 @@
         <div class="form-group" style="float:left;margin-left: 30%;">
             <label for="title">上传图片</label>
             <input type="file" name='image' id="imagelist" style="width: 200px; height: 50px;">
-            <img src="../../public/images/main/A2.jpg" id="img" style="width: 200px;height: 200px;">
+            <img src="../../public/images/main/A2.jpg" id="img" style="width: 200px; height: 200px;">
         </div>
         <div class="form-group" style="float:left;margin-left: 20px;">
             <label for="title">上传文件</label>
-            <input type="file" name='image' id="imagelist" style="width: 200px; height: 50px;">
-            <img src="../../public/images/main/A2.jpg" id="img" style="width: 200px;height: 200px;">
+            <input type="file" accept=".zip,.rar" id="filelist" autocomplete="off" name="filename"
+                style="width: 200px; height: 50px;">
+            <img src="../../public/images/main/A2.jpg" id="fileimg" style="width: 200px;height: 200px;">
         </div>
-        <button type="submit" class="btn btn-default" style="float: right;border:1px">提交</button>
+        <button type="submit" class="btn btn-default" style="float: right;border:1px" onclick="FileUpload()">提交</button>
     </form>
 </div>
 <script>
     var fileEle = document.getElementById('imagelist');
     var imgEle = document.getElementById('img');
-    fileEle.onchange = function (e) {
+
+    var filelist = document.getElementById("filelist");
+    var fileImg = document.getElementById("fileimg");
+
+    filelist.onchange = function (e) {
         var file1 = e.target.files[0];
-        var url1 = window.URL.createObjectURL(file1);
-        imgEle.src = url1;
-    }
-    function preView(url) {
-        let reader = new FileReader();
-
-        getImageBlob(url, function (blob) {
-            reader.readAsDataURL(blob);
-        });
-
-        reader.onload = function (e) {
-            var img = document.createElement("img");
-            img.src = e.target.result;
-            document.body.appendChild(img);
+        var name = file1.name;
+        if (name.indexOf("zip") !== -1) {
+            fileImg.src = "../../public/images/main/zip.png";
+        } else if (name.indexOf("rar") !== -1) {
+            fileImg.src = "../../public/images/main/rar.jpg";
+        } else {
+            alert("上传不是压缩包zip或者rar");
         }
     }
 
-    //获取图片的Blob值
-    function getImageBlob(url, cb) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("get", url, true);
-        xhr.responseType = "blob";
-        xhr.onload = function () {
-            if (this.status == 200) {
-                if (cb) cb(this.response);
-            }
-        };
-        xhr.send();
+    fileEle.onchange = function (e) {
+        var file1 = e.target.files[0];
+        var name = file1.name;
+        if (name.indexOf("png") !== -1 || name.indexOf("jpg") !== -1) {
+            var url1 = window.URL.createObjectURL(file1);
+            imgEle.src = url1;
+            // preView(url1);
+        } else {
+            alert("上传不是图片格式png或者jpg");
+        }
     }
 
     function onType2() {
-        var type1 = document.getElementById('type1').innerHTML;
-        type1 = type1.substring(0, 2);
+        var type1 = document.getElementById('type1').value;
+        // type1 = type1.substring(0, 2);
         if (type1.indexOf("类型") !== -1) {
             alert("类型I 没有选择");
         } else {
@@ -145,15 +142,38 @@
     }
 
     function onType11(string) {
-        document.getElementById('type1').innerHTML = string + "  <span class='caret'></span>";
+        document.getElementById('type1').value = string;
     }
 
     function onType21(string) {
-        document.getElementById('type2').innerHTML = string + "  <span class='caret'></span>";
+        document.getElementById('type2').value = string;
     }
 
     function onType41(string) {
-        document.getElementById('type4').innerHTML = string + "  <span class='caret'></span>";
+        document.getElementById('type4').value = string;
+    }
+
+    function FileUpload() {
+        //获取上传的File对象，此处是一张图片对象
+        var fileEle = document.getElementById('imagelist')
+        let file = fileEle.files[0];
+        let formData = new FormData();
+        var value1 = document.getElementById('type2').value;
+        formData.append(value1, file);//设置key为avartar,value为上述的File对象
+        $.ajax({
+            type: 'POST',
+            url: '/admin/filepath',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+
+            },
+            error: function (err) {
+                console.log(err.message);
+            }
+        });
     }
 </script>
 {% endblock %}
