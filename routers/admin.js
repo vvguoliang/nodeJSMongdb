@@ -24,15 +24,15 @@
 
 var express = require('express');
 var routerAdmin = express.Router();
-const fs = require('fs');
-const path = require('path');
-//上传图片的模板
-var multer = require('multer');
-
+var fs = require('fs');
+var path = require('path');
+var formidable = require('formidable');
 var User = require('../models/User'); //用户模型
 var Category = require('../models/Category'); //分类模型
 var Content = require('../models/Content'); //内容模型
 var FileMangement = require('../models/FileManagement'); // 文件上传
+
+var compressing = require('compressing');
 //
 routerAdmin.use(function (req, res, next) {
     //对进入用户身份进行验证
@@ -464,28 +464,65 @@ routerAdmin.get('/file/upload', function (req, res, next) {
     });
 });
 
-//生成的图片放入uploads文件夹下
-var upload = multer({ dest: 'E:/U3D/' })
 //接口上传图片放置位置
-routerAdmin.post("/filepath", upload.single('test'), function (req, res, next) {
-    //读取文件路径
-    fs.readFile(req.file.path, (err, data) => {
-        //如果读取失败
-        if (err) { return res.send('上传失败') }
-        //如果读取成功
-        //声明图片名字为时间戳和随机数拼接成的，尽量确保唯一性
-        let time = Date.now() + parseInt(Math.random() * 999) + parseInt(Math.random() * 2222);
-        //拓展名
-        let extname = req.file.mimetype.split('/')[1]
-        //拼接成图片名
-        let keepname = time + '.' + extname
-        //三个参数
-        //1.图片的绝对路径
-        //2.写入的内容
-        //3.回调函数
-        fs.writeFile(path.join(__dirname, 'E:/U3D/' + keepname), data, (err) => {
-            if (err) { return res.send('写入失败') }
-            res.send({ err: 0, msg: '上传ok' })
+routerAdmin.post("/filepath", function (req, res, next) {
+    var pathLu = "E:/U3D/";
+    //创建表单上传
+    var form = formidable.IncomingForm();
+    //设置编辑
+    form.encoding = 'utf-8';
+    //设置文件存储路径
+    form.uploadDir = pathLu;
+    //保留后缀
+    form.keepExtensions = true;
+    //设置单文件大小限制 2m
+    // form.maxFieldsSize = 10 * 1024 * 1024;
+    //form.maxFields = 1000;  设置所以文件的大小总和
+    form.parse(req, async function (err, fields, files) {
+        var file = files.png;
+        var file1 = files.zip;
+        var type = fields.type;
+        var type1 = fields.type1;
+        var type2 = fields.type2;
+        // console.log("文件名：" + file.name + "==文件名：" + file1.name + "==第三层名字：" + type + "==第一层：" + type1 + "==第二层：" + type2);
+        pathLu = pathLu + type1 + '/' + type2 + '/' + type; //表示绝对路径
+        console.log("type:" + type + "==type1:" + type1 + "==type2:" + type2);
+
+        await dirExists(pathLu);
+        let picName = path.extname(file.name);
+        let picName1 = path.extname(file1.name);
+        fs.rename(file.path, pathLu + '/' + type + picName, function (err) {
+            if (err) return res.render('admin/file_upload', {
+                userInfo: req.userInfo,
+                message: "图片保存异常！"
+            });
+            fs.rename(file1.path, pathLu + '/' + type + picName1, async function (err) {
+                if (picName1.indexOf("zip") !== -1) {
+                    await compressing.zip.uncompress(pathLu + '/' + type + picName1, pathLu);
+                } else if (picName1.indexOf("rar") !== -1) {
+                    await compressing.rar.uncompress(pathLu + '/' + type + picName1, pathLu);
+                }
+                // //保存数据到数据库
+                FileMangement.update({
+                    //更新的数据字段
+                    username: req.userInfo.username,
+                    filename: postData.filename,
+                    titleName: type,
+                    assetName: type,
+                    type: '',
+                    type1: type1,
+                    type2: type2,
+                    imagePath: '',
+                    bundlePath: '',
+                    platform: postData.platform
+                }).then(function () {
+                    res.render('admin/success', {
+                        userInfo: req.userInfo,
+                        message: '上传成功',
+                        url: '/admin/file_upload'
+                    });
+                });
+            });
         });
     });
 });
@@ -494,30 +531,33 @@ routerAdmin.post('/file/upload', function (req, res, next) {
 
     var postData = req.body;
     console.log("titleName:" + postData.titleName + "==assetName:" + postData.assetName + "==type1:" + postData.type1 + "==type2:" + postData.type2 + "==platform:" + postData.platform + "==filename:" + postData.filename);
-    if (postData.titleName === '' || postData.assetName === '' || postData.type1 === '' || postData.type2 === '' || postData.platform === '' || postData.filename === '') {
+    if (postData.platform === '' || postData.filename === '') {
         res.render('admin/error', {
             userInfo: req.userInfo,
             message: '有未填写的信息'
         });
         return;
     } else {
-        // //保存数据到数据库
-        // FileMangement.update({
-        //     //更新的数据字段
-        //     username: req.userInfo.username,
-        //     filename: postData.filename,
-        //     titleName: postData.titleName,
-        //     assetName: postData.assetName,
-        //     type1: postData.type1,
-        //     type2: postData.type2,
-        //     platform: postData.platform
-        // }).then(function () {
-        // res.render('admin/success', {
-        //     userInfo: req.userInfo,
-        //     message: '上传成功',
-        //     url: '/admin/file_upload'
-        // });
-        // });
+        //保存数据到数据库
+        FileMangement.new({
+            //更新的数据字段
+            username: req.userInfo.username,
+            filename: postData.filename,
+            titleName: '',
+            assetName: '',
+            type: '',
+            type1: '',
+            type2: '',
+            imagePath: '',
+            bundlePath: '',
+            platform: postData.platform
+        }).then(function () {
+            res.render('admin/success', {
+                userInfo: req.userInfo,
+                message: '上传成功',
+                url: '/admin/file_upload'
+            });
+        });
     }
 });
 
@@ -572,4 +612,59 @@ routerAdmin.get('/logout', function (req, res) {
     res.render('main/mainIndex', {});
 });
 
+
+/**
+ * 读取路径信息
+ * @param {string} path 路径
+ */
+function getStat(path) {
+    return new Promise((resolve, reject) => {
+        fs.stat(path, (err, stats) => {
+            if (err) {
+                resolve(false);
+            } else {
+                resolve(stats);
+            }
+        })
+    })
+}
+
+/**
+ * 创建路径
+ * @param {string} dir 路径
+ */
+function mkdir(dir) {
+    return new Promise((resolve, reject) => {
+        fs.mkdir(dir, err => {
+            if (err) {
+                resolve(false);
+            } else {
+                resolve(true);
+            }
+        })
+    })
+}
+
+/**
+ * 路径是否存在，不存在则创建
+ * @param {string} dir 路径
+ */
+async function dirExists(dir) {
+    let isExists = await getStat(dir);
+    //如果该路径且不是文件，返回true
+    if (isExists && isExists.isDirectory()) {
+        return true;
+    } else if (isExists) {     //如果该路径存在但是文件，返回false
+        return false;
+    }
+    //如果该路径不存在
+    let tempDir = path.parse(dir).dir;      //拿到上级路径
+    //递归判断，如果上级目录也不存在，则会代码会在此处继续循环执行，直到目录存在
+    let status = await dirExists(tempDir);
+    let mkdirStatus;
+    if (status) {
+        mkdirStatus = await mkdir(dir);
+    }
+    return mkdirStatus;
+}
 module.exports = routerAdmin;

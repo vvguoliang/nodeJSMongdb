@@ -154,21 +154,115 @@
     }
 
     function FileUpload() {
+        var type1 = '';
+        switch (document.getElementById('type1').value) {
+            case "交通":
+                type1 = 'Traffic';
+                break;
+            case "军事":
+                type1 = 'Military';
+                break;
+            case "城市":
+                type1 = 'City';
+                break;
+            case "室内":
+                type1 = 'Indoor';
+                break;
+            case "植被":
+                type1 = 'Vegetation';
+                break;
+        }
+        var type2 = '';
+        switch (document.getElementById('type2').value) {
+            case "汽车":
+                type2 = 'Car';
+                break;
+            case "船":
+                type2 = 'Boat';
+                break;
+            case "飞机":
+                type2 = 'Plane';
+                break;
+            case "单兵":
+                type2 = 'Individual';
+                break;
+            case "坦克":
+                type2 = 'Tank';
+                break;
+            case "导弹":
+                type2 = 'Missile';
+                break;
+            case "战机":
+                type2 = 'FightPlane';
+                break;
+            case "装甲车":
+                type2 = 'ArmoredCar';
+                break;
+            case "驱逐舰":
+                type2 = 'Destroyer';
+                break;
+            case "地标建筑":
+                type2 = 'Landmark';
+                break;
+            case "建筑":
+                type2 = 'Building';
+                break;
+            case "护栏":
+                type2 = 'Guardrail';
+                break;
+            case "标识牌":
+                type2 = 'Signage';
+                break;
+            case "路灯":
+                type2 = 'StreetLamp';
+                break;
+            case "道路":
+                type2 = 'Road';
+                break;
+            case "桌椅":
+                type2 = 'TableChair';
+                break;
+            case "家电":
+                type2 = 'Appliances';
+                break;
+            case "沙发":
+                type2 = 'Sofa';
+                break;
+            case "岩石":
+                type2 = 'Rock';
+                break;
+            case "树木":
+                type2 = 'Tree';
+                break;
+            case "花草":
+                type2 = 'Flowers';
+                break;
+        }
+
         //获取上传的File对象，此处是一张图片对象
-        var fileEle = document.getElementById('imagelist')
+        var fileEle = document.getElementById('imagelist')//图片
+        var filelist = document.getElementById("filelist");//压缩包
+        var value1 = document.getElementById('description').value;//第三层文件夹名字
         let file = fileEle.files[0];
+        let file1 = filelist.files[0];
         let formData = new FormData();
-        var value1 = document.getElementById('type2').value;
-        formData.append(value1, file);//设置key为avartar,value为上述的File对象
+
+        formData.append("type1", type1);
+        formData.append("type2", type2);
+        formData.append("type", value1);
+        formData.append("png", file);//设置key为avartar,value为上述的File对象
+        formData.append("zip", file1);
         $.ajax({
-            type: 'POST',
+            type: 'post',
             url: '/admin/filepath',
             data: formData,
             cache: false,
             contentType: false,
             processData: false,
             success: function (data) {
-
+                alert("上传成功", function () {
+                    window.location.reload();
+                });
             },
             error: function (err) {
                 console.log(err.message);

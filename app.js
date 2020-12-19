@@ -10,6 +10,7 @@ var bodyParser = require('body-parser'); //中间件/可从request中获取body�
 var Cookies = require('cookies');
 var User = require('./models/User');
 var os = require('os')
+
 //创建app应用 ==> NodeJS Http.createServer();
 var app = express();
 //设置静态文件托管
