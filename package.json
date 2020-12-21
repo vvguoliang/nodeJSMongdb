@@ -9,6 +9,7 @@
     "author": "Zhangyi",
     "license": "ISC",
     "dependencies": {
+        "babel-plugin-transform-remove-strict-mode": "0.0.2",
         "body-parser": "^1.17.2",
         "compressing": "^1.5.1",
         "cookies": "^0.7.0",

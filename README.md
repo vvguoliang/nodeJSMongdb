@@ -55,3 +55,12 @@
     2.`show dbs`查看当前所有的数据库
     3.`use nodejs-bolg`使用当前的数据库
     4.`db.users.find()` 查看当前数据库下表为`users`的内容
+
+
+## 指定注册为镜像地址
+npm config set registry https://registry.npm.taobao.org/
+## 原地址
+https://registry.npmjs.org/ 
+## 验证是否成功
+npm config get registry
+

@@ -466,61 +466,69 @@ routerAdmin.get('/file/upload', function (req, res, next) {
 
 //接口上传图片放置位置
 routerAdmin.post("/filepath", function (req, res, next) {
-    var pathLu = "E:/U3D/";
+    var pathlu1 = 'E:';
+    var pathLu = "/U3D/";
     //创建表单上传
     var form = formidable.IncomingForm();
     //设置编辑
     form.encoding = 'utf-8';
     //设置文件存储路径
-    form.uploadDir = pathLu;
+    form.uploadDir = pathlu1 + pathLu;
     //保留后缀
     form.keepExtensions = true;
     //设置单文件大小限制 2m
     // form.maxFieldsSize = 10 * 1024 * 1024;
     //form.maxFields = 1000;  设置所以文件的大小总和
     form.parse(req, async function (err, fields, files) {
-        var file = files.png;
-        var file1 = files.zip;
         var type = fields.type;
         var type1 = fields.type1;
         var type2 = fields.type2;
-        // console.log("文件名：" + file.name + "==文件名：" + file1.name + "==第三层名字：" + type + "==第一层：" + type1 + "==第二层：" + type2);
-        pathLu = pathLu + type1 + '/' + type2 + '/' + type; //表示绝对路径
-        console.log("type:" + type + "==type1:" + type1 + "==type2:" + type2);
+        var platform = fields.platform;
+        var filename1 = fields.filename;
+        var assetName1 = fields.assetName;
 
-        await dirExists(pathLu);
+        var file = files.png;
+        var file1 = files.zip;
+
         let picName = path.extname(file.name);
         let picName1 = path.extname(file1.name);
-        fs.rename(file.path, pathLu + '/' + type + picName, function (err) {
+        // console.log("文件名：" + file.name + "==文件名：" + file1.name + "==第三层名字：" + type + "==第一层：" + type1 + "==第二层：" + type2);
+        pathlu1 = pathlu1 + pathLu + type1 + '/' + type2 + '/' + type + '/' + platform; //表示绝对路径
+        pathLu = pathLu + type1 + '/' + type2 + '/' + type + '/' + platform;//路径
+
+        await dirExists(pathlu1);
+
+        fs.rename(file.path, pathlu1 + '/' + type + picName, function (err) {
             if (err) return res.render('admin/file_upload', {
                 userInfo: req.userInfo,
                 message: "图片保存异常！"
             });
-            fs.rename(file1.path, pathLu + '/' + type + picName1, async function (err) {
+            fs.rename(file1.path, pathlu1 + '/' + type + picName1, async function (err) {
                 if (picName1.indexOf("zip") !== -1) {
-                    await compressing.zip.uncompress(pathLu + '/' + type + picName1, pathLu);
+                    await compressing.zip.uncompress(pathlu1 + '/' + type + picName1, pathlu1);
                 } else if (picName1.indexOf("rar") !== -1) {
-                    await compressing.rar.uncompress(pathLu + '/' + type + picName1, pathLu);
+                    await compressing.rar.uncompress(pathlu1 + '/' + type + picName1, pathlu1);
                 }
-                // //保存数据到数据库
-                FileMangement.update({
-                    //更新的数据字段
+
+                var newFileMangement = new FileMangement({
                     username: req.userInfo.username,
-                    filename: postData.filename,
+                    filename: filename1,
                     titleName: type,
-                    assetName: type,
-                    type: '',
+                    assetName: assetName1,
+                    type: type,
                     type1: type1,
                     type2: type2,
-                    imagePath: '',
-                    bundlePath: '',
-                    platform: postData.platform
-                }).then(function () {
+                    imagePath: getIPv4() + pathLu + '/' + type + picName,
+                    bundlePath: getIPv4() + pathLu + '/' + type + '/Bunler/',
+                    platform: platform
+                });
+                newFileMangement.save().then(function (rs) {
                     res.render('admin/success', {
                         userInfo: req.userInfo,
                         message: '上传成功',
-                        url: '/admin/file_upload'
+                        url: '/admin/file/upload'
                     });
+                    return;
                 });
             });
         });
@@ -530,38 +538,33 @@ routerAdmin.post("/filepath", function (req, res, next) {
 routerAdmin.post('/file/upload', function (req, res, next) {
 
     var postData = req.body;
-    console.log("titleName:" + postData.titleName + "==assetName:" + postData.assetName + "==type1:" + postData.type1 + "==type2:" + postData.type2 + "==platform:" + postData.platform + "==filename:" + postData.filename);
-    if (postData.platform === '' || postData.filename === '') {
+    console.log("==assetName:" + postData.assetName + "==type1:" + postData.type1 + "==type2:" + postData.type2 + "==platform:" + postData.platform + "==filename:" + postData.filename);
+    if (postData.assetName === '' || postData.platform === '' || postData.filename === '') {
         res.render('admin/error', {
             userInfo: req.userInfo,
             message: '有未填写的信息'
         });
         return;
     } else {
-        //保存数据到数据库
-        FileMangement.new({
-            //更新的数据字段
-            username: req.userInfo.username,
-            filename: postData.filename,
-            titleName: '',
-            assetName: '',
-            type: '',
-            type1: '',
-            type2: '',
-            imagePath: '',
-            bundlePath: '',
-            platform: postData.platform
-        }).then(function () {
-            res.render('admin/success', {
-                userInfo: req.userInfo,
-                message: '上传成功',
-                url: '/admin/file_upload'
-            });
+        res.render('admin/success', {
+            userInfo: req.userInfo,
+            message: '上传成功',
+            url: '/admin/file/upload'
         });
+        return;
     }
 });
 
-
+//下载文件
+routerAdmin.get('/file/download', function (req, res, next) {
+    //内容添加//下拉选择分类//从数据库取出分类数据
+    FileMangement.find().sort({ _id: -1 }).then(function (fileManagements) {
+        res.render('admin/file_download', {
+            userInfo: req.userInfo,
+            fileManagements: fileManagements
+        });
+    });
+});
 
 // //newexcel
 // routerAdmin.get('/newexcel', function(req, res, next) {
@@ -666,5 +669,25 @@ async function dirExists(dir) {
         mkdirStatus = await mkdir(dir);
     }
     return mkdirStatus;
+}
+
+var os = require('os')
+
+function getIPv4() {
+    var interfaces = os.networkInterfaces(); //获取网络接口列表
+    var ipv4s = []; //同一接口可能有不止一个IP4v地址，所以用数组存
+
+    Object.keys(interfaces).forEach(function (key) {
+        interfaces[key].forEach(function (item) {
+            //跳过IPv6 和 '127.0.0.1'
+            if ('IPv4' !== item.family || item.internal !== false) return;
+            if (key === 'WLAN') {
+                ipv4s.push(item.address); //可用的ipv4s加入数组
+                console.log(key + '--' + item.address);
+            }
+        })
+    })
+
+    return "http://" + ipv4s[0] + ":8080"; //返回一个可用的即可
 }
 module.exports = routerAdmin;

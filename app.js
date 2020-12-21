@@ -9,7 +9,6 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser'); //中间件/可从request中获取body数据
 var Cookies = require('cookies');
 var User = require('./models/User');
-var os = require('os')
 
 //创建app应用 ==> NodeJS Http.createServer();
 var app = express();
@@ -18,7 +17,7 @@ var app = express();
 // app.use(express.static(path.join(__dirname,'public')));
 app.use('/public', express.static(__dirname + '/public'));
 
-// app.use('/dist', express.static(__dirname + '/dist')); 
+app.use('/U3D', express.static(path.join("E:/", 'U3D')));
 //配置应用模板
 //定义当前应用所使用的模板引擎
 /*
@@ -76,19 +75,6 @@ app.use('/api', require('./routers/api'));
 app.use(bodyParser.json({ limit: '100mb' }));
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 
-
-//监听Http请求  XXX端口的信息数据
-// mongoose.connect('mongodb://localhost:27018/iBlog', function (err) {
-//     if (err) {
-//         console.log('数据库连接失败');
-//         return;
-//     }
-//     else {
-//         console.log('数据库连接成功');
-//         app.listen(8081, 'localhost');
-//         console.log('Server is running at http://localhost:8081');
-//     }
-// });
 mongoose.connect('mongodb://localhost:27017/RabbitGod', { useNewUrlParser: true });
 var db = mongoose.connection
 
@@ -98,8 +84,8 @@ db.once('open', function () {
     app.listen(8080, getIPv4());
     console.log("Server is running at http://" + getIPv4() + ":8080");
 })
-// app.listen(8081, 'localhost');
-// console.log('Server is running at http://localhost:8081');
+
+var os = require('os')
 
 function getIPv4() {
     var interfaces = os.networkInterfaces(); //获取网络接口列表
