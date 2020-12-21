@@ -17,12 +17,14 @@ routerAdmin.use(function (req, res, next) {
 
 routerAdmin.post('/U3D', function (req, res, next) {
 
-    var limit = req.limit | 20;
-    var pages = req.pages | 0;
-    var type1 = req.type1;
-    var type2 = req.type2;
-    var platform = req.platform;
+    var reqbody = req.body;
+    var limit = reqbody.limit | 20;
+    var page = reqbody.page | 1;
+    var type1 = reqbody.type1;
+    var type2 = reqbody.type2;
+    var platform = reqbody.platform;
     var skip = (page - 1) * limit;
+    console.log("======" + JSON.stringify(reqbody));
     FileMangement.find().sort({ _id: -1 }).limit(limit).skip(skip).then(function (fileManagements) {
         console.log("====" + fileManagements.length);
         console.log('=====' + JSON.stringify(fileManagements));

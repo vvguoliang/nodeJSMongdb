@@ -72,6 +72,7 @@ app.use('/', require('./routers/main'));
 app.use('/admin', require('./routers/admin'));
 app.use('/user', require('./routers/users'));
 app.use('/api', require('./routers/api'));
+app.use('/Interfacefile', require('./routers/Interfacefile'));
 app.use(bodyParser.json({ limit: '100mb' }));
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 
