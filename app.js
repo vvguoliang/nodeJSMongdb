@@ -10,6 +10,7 @@ var bodyParser = require('body-parser'); //中间件/可从request中获取body�
 var Cookies = require('cookies');
 var User = require('./models/User');
 var os = require('os')
+
 //创建app应用 ==> NodeJS Http.createServer();
 var app = express();
 //设置静态文件托管
@@ -71,7 +72,7 @@ app.use(function (req, res, next) {
 //根据不同功能划分模块
 app.use('/', require('./routers/main'));
 app.use('/admin', require('./routers/admin'));
-// app.use('/user', require('./routers/users'));
+app.use('/user', require('./routers/users'));
 app.use('/api', require('./routers/api'));
 
 
@@ -87,13 +88,13 @@ app.use('/api', require('./routers/api'));
 //         console.log('Server is running at http://localhost:8081');
 //     }
 // });
-mongoose.connect('mongodb://localhost:27017/RabbitGod', { useNewUrlParser: true });
+mongoose.connect('mongodb://localhost:27017/RabbitGod', { useNewUrlParser: true, useUnifiedTopology: true });
 var db = mongoose.connection
 
 db.on('error', console.error.bind(console, '连接错误:'));
 db.once('open', function () {
     console.log('连接成功' + getIPv4());
-    app.listen(8080, '127.0.0.1');
+    app.listen(8080, getIPv4());
     console.log("Server is running at http://" + getIPv4() + ":8080");
 })
 // app.listen(8081, 'localhost');

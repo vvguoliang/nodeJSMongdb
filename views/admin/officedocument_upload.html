@@ -1,0 +1,62 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+<div class="jumbotron">
+    <!--用户列表-->
+    <ol class="breadcrumb">
+        <li><a href="#">办公文件管理</a></li>
+        <li><span></span>添加办公文件</li>
+    </ol>
+    <form method="post">
+        <div class="form-group">
+            <label for="title">文件名</label>
+            <input class="form-control" style="height: 40px;width: 300px;" type="text" id="title" name="title"
+                placeholder="请输入标题" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label for="title">文件格式</label>
+            <li class="dropdown">
+                <input type="text" id="type" name="title" placeholder="选择文件格式" autocomplete="off" data-toggle="dropdown"
+                    role="button" aria-haspopup="true" aria-expanded="false" readonly="readonly" style="height: 35px;">
+                <ul class="dropdown-menu">
+                    <li><a onclick="onType('doc')">doc</a></li>
+                    <li><a onclick="onType('docm')">docm</a></li>
+                    <li><a onclick="onType('docx')">docx</a></li>
+                    <li><a onclick="onType('dot')">dot</a></li>
+                    <li><a onclick="onType('pot')">pot</a></li>
+                    <li><a onclick="onType('potm')">potm</a></li>
+                    <li><a onclick="onType('potx')">potx</a></li>
+                    <li><a onclick="onType('pps')">pps</a></li>
+                    <li><a onclick="onType('ppsm')">ppsm</a></li>
+                    <li><a onclick="onType('ppsx')">ppsx</a></li>
+                    <li><a onclick="onType('ppt')">ppt</a></li>
+                    <li><a onclick="onType('pptm')">pptm</a></li>
+                    <li><a onclick="onType('pptx')">pptx</a></li>
+                    <li><a onclick="onType('sldm')">sldm</a></li>
+                    <li><a onclick="onType('sldx')">sldx</a></li>
+                    <li><a onclick="onType('xls')">xls</a></li>
+                    <li><a onclick="onType('xlsm')">xlsm</a></li>
+                    <li><a onclick="onType('xlsx')">xlsx</a></li>
+                    <li><a onclick="onType('xlt')">xlt</a></li>
+                    <li><a onclick="onType('xlt')">xlt</a></li>
+                    <li><a onclick="onType('xltm')">xltm</a></li>
+                    <li><a onclick="onType('xltx')">xltx</a></li>
+                    <li><a onclick="onType('pdf')">pdf</a></li>
+                </ul>
+            </li>
+        </div>
+        <div class="form-group">
+            <label for="title">上传文件</label>
+            <input style="height: 45px;width: 300px;" type="file"
+                accept=".doc,.docm,.docx,.dot,.dotx,.pot,.potm,.potx,.pps,.ppsm,.ppsx,.ppt,.pptm,.pptx,.sldm,.sldx,,.xls,.xlsm,.xlsx,.xlt,.xltm,.xltx,.pdf"
+                id="title" name="title" placeholder="请输入标题" autocomplete="off">
+        </div>
+        <button type="submit" class="btn btn-default" style="margin: 25px;">提交</button>
+    </form>
+</div>
+<script>
+    function onType(str) {
+        document.getElementById('type').value = str;
+    }
+</script>
+{% endblock %}

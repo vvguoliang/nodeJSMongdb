@@ -25,7 +25,7 @@
                     {% if userInfo.isSuperAdmin %}
                     <li><a href="/admin/user">用户管理</a></li>
                     {% endif %}
-                    <li class="dropdown">
+                    <!-- <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">版块管理 <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="/admin/category">版块首页</a></li>
@@ -38,19 +38,21 @@
                             <li><a href="/admin/content">内容首页</a></li>
                             <li><a href="/admin/content/add">内容添加</a></li>
                         </ul>
-                    </li>
+                    </li> -->
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">excel管理 <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">办公文件管理 <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="/admin/newexcel">excel新编辑器</a></li>
-                            <li><a href="/admin/content/add">excel文件编辑器</a></li>
-                            <li><a href="/admin/content/add">excel上传下载</a></li>
+                            <li><a href="/admin/officedocument">办公文件展示</a></li>
+                            <li><a href="/admin/officedocument/upload">办公文件上传</a></li>
                         </ul>
                     </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ userInfo.username }} <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">{{ userInfo.username }} <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="/admin/logout">退出</a></li>
                         </ul>

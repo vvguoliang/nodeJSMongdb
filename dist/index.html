@@ -17,7 +17,9 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <a href="/admin" style="color: aliceblue; font-size: 14px;">后台管理</a>
         <li class="dropdown nav pull-right">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="color: aliceblue; font-size: 14px;">{{ userInfo.username }} <span class="caret"></span></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                aria-expanded="false" style="color: aliceblue; font-size: 14px;">{{ userInfo.username }} <span
+                    class="caret"></span></a>
             <ul class="dropdown-menu">
                 <li><a href="/admin/logout">退出</a></li>
             </ul>
@@ -58,17 +60,17 @@
                 };
             }
             var xs = x_spreadsheet('#RabbitGod', {
-                    showToolbar: true,
-                    showGrid: true
-                })
-                .loadData([{}, {}]).change((cdata) => {});
+                showToolbar: true,
+                showGrid: true
+            })
+                .loadData([{}, {}]).change((cdata) => { });
 
             xs.on('cell-selected', (cell, ri, ci) => {
                 console.log('cell:', cell, ', ri:', ri, ', ci:', ci);
             }).on('cell-edited', (text, ri, ci) => {
                 console.log('text:', text, ', ri: ', ri, ', ci:', ci);
             });
-            setTimeout(() => {}, 5000);
+            setTimeout(() => { }, 5000);
         }
     </script>
     <script type="text/javascript" src="../../public/plug-in/jquery-3.1.1.js"></script>
