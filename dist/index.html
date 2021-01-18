@@ -1,79 +1,184 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="utf-8">
-    <title>RabbitGod</title>
-    <link rel="stylesheet" href="../../public/plug-in/bootstrap-3.3.7/css/bootstrap.css">
-    <!-- <link rel="stylesheet" href="../../public/plug-in/bootstrap-3.3.7/css/bootstrap-theme.css"> -->
-    <link rel="stylesheet" href="../../public/css/Login.css">
-    <link href="/dist/xspreadsheet.css" rel="stylesheet">
+<head lang='zh'>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="renderer" content="webkit" />
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=0" />
+    <title>Luckysheet</title>
+
+    <link rel='stylesheet' href='./plugins/css/pluginsCss.css' />
+    <link rel='stylesheet' href='./plugins/plugins.css' />
+    <link rel='stylesheet' href='./css/luckysheet.css' />
+    <link rel='stylesheet' href='./assets/iconfont/iconfont.css' />
+    <script src="./plugins/js/plugin.js"></script>
+
+    <!-- rollup luckysheet.js -->
+    <script src="./luckysheet.umd.js"></script>
+
 </head>
 
-<body onload="load()">
-    <!-- <nav class="navbar navbar-default">
-        <div class="container-fluid"> -->
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <a href="/admin" style="color: aliceblue; font-size: 14px;">后台管理</a>
-        <li class="dropdown nav pull-right">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="color: aliceblue; font-size: 14px;">{{ userInfo.username }} <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-                <li><a href="/admin/logout">退出</a></li>
-            </ul>
-        </li>
+<body>
+    <div id="luckysheet" style="margin:0px;padding:0px;position:absolute;width:100%;height:100%;left: 0px;top: 0px;">
     </div>
-    <!-- </div>
-    </nav> -->
-    <footer>
-        <div id="RabbitGod" style="margin-bottom: -100px;"></div>
-    </footer>
-    <script>
-        function load() {
-            const rows10 = {
-                len: 1000
-            };
-            for (let i = 0; i < 1000; i += 1) {
-                rows10[i] = {
-                    cells: {
-                        0: {
-                            text: 'A-' + i
-                        },
-                        1: {
-                            text: 'B-' + i
-                        },
-                        2: {
-                            text: 'C-' + i
-                        },
-                        3: {
-                            text: 'D-' + i
-                        },
-                        4: {
-                            text: 'E-' + i
-                        },
-                        5: {
-                            text: 'F-' + i
-                        },
-                    }
-                };
-            }
-            var xs = x_spreadsheet('#RabbitGod', {
-                    showToolbar: true,
-                    showGrid: true
-                })
-                .loadData([{}, {}]).change((cdata) => {});
+    <!-- demo feature, non-production use -->
+    <script src="./demoData/demoFeature.js"></script>
+    <script src="./demoData/sheetFormula.js"></script>
+    <script src="./demoData/sheetCell.js"></script>
+    <script src="./demoData/sheetConditionFormat.js"></script>
+    <script src="./demoData/sheetTable.js"></script>
+    <script src="./demoData/sheetComment.js"></script>
+    <script src="./demoData/sheetPivotTableData.js"></script>
+    <script src="./demoData/sheetPivotTable.js"></script>
+    <script src="./demoData/sheetSparkline.js"></script>
+    <script src="./demoData/sheetChart.js"></script>
+    <script src="./demoData/sheetPicture.js"></script>
+    <script src="./demoData/sheetDataVerification.js"></script>
 
-            xs.on('cell-selected', (cell, ri, ci) => {
-                console.log('cell:', cell, ', ri:', ri, ', ci:', ci);
-            }).on('cell-edited', (text, ri, ci) => {
-                console.log('text:', text, ', ri: ', ri, ', ci:', ci);
-            });
-            setTimeout(() => {}, 5000);
-        }
+    <script>
+        // import sheetFormula from './demoData/sheetFormula.js'
+        // import sheetCell from './demoData/sheetCell.js'
+        // import sheetConditionFormat from './demoData/sheetConditionFormat.js'
+        // import sheetTable from './demoData/sheetTable.js'
+        // import sheetComment from './demoData/sheetComment.js'
+        // import sheetPivotTableData from './demoData/sheetPivotTableData.js'
+        // import sheetPivotTable from './demoData/sheetPivotTable.js'
+        // import sheetSparkline from './demoData/sheetSparkline.js'
+        // import sheetChart from './demoData/sheetChart.js'
+        // import sheetPicture from './demoData/sheetPicture.js'
+        // import sheetDataVerification from './demoData/sheetDataVerification.js'
+
+        $(function () {
+
+            // According to the browser language
+            var lang = luckysheetDemoUtil.language() === 'zh' ? 'zh' : 'en';
+            var isShare = luckysheetDemoUtil.getRequest().share; // '?share=1' opens the collaborative editing mode
+            var gridKey = luckysheetDemoUtil.getRequest().gridKey; // workbook id for collaborative editing, or directly define here
+            var options = null;
+
+            if (isShare || gridKey) {
+                // http://localhost:3000/?gridKey=12eyy789-kk45ofid-23737245
+                if (!gridKey) {
+                    alert('If gridKey is not provided in the address bar, please add it in the source code')
+                }
+                options = {
+                    container: "luckysheet",
+                    lang: lang,
+                    allowUpdate: true,
+                    updateImageUrl: location.origin + "/luckysheet/api/updateImg",
+                    updateUrl: "ws://" + location.host + "/luckysheet/websocket/luckysheet",
+                    gridKey: gridKey,
+                    loadUrl: location.origin + "/luckysheet/api/load",
+                    loadSheetUrl: location.origin + "/luckysheet/api/loadsheet"
+                }
+            } else {
+                // http://localhost:3000/ 
+                options = {
+                    container: 'luckysheet',
+                    lang: lang,
+                    forceCalculation: false,
+                    plugins: ['chart'],
+                    fontList: [
+                        {
+                            "fontName": "HanaleiFill",
+                            "url": "./assets/iconfont/HanaleiFill-Regular.ttf"
+                        },
+                        {
+                            "fontName": "Anton",
+                            "url": "./assets/iconfont/Anton-Regular.ttf"
+                        },
+                        {
+                            "fontName": "Pacifico",
+                            "url": "./assets/iconfont/Pacifico-Regular.ttf"
+                        }
+                    ],
+                    hook: {
+                        rowTitleCellRenderBefore: function (rowNum, postion, ctx) {
+                            console.log(rowNum);
+                        },
+                        rowTitleCellRenderAfter: function (rowNum, postion, ctx) {
+                            console.log(ctx);
+                        },
+                        columnTitleCellRenderBefore: function (columnAbc, postion, ctx) {
+                            console.log(columnAbc);
+                        },
+                        columnTitleCellRenderAfter: function (columnAbc, postion, ctx) {
+                            console.log(postion);
+                        },
+                        cellRenderBefore: function (cell, postion, sheetFile, ctx) {
+                            console.log(cell, postion, sheetFile, ctx);
+                        },
+                        cellRenderAfter: function (cell, postion, sheetFile, ctx) {
+                            console.log(postion);
+                        },
+                        cellMousedownBefore: function (cell, postion, sheetFile, ctx) {
+                            console.log(postion);
+                        },
+                        cellMousedown: function (cell, postion, sheetFile, ctx) {
+                            console.log(sheetFile);
+                        },
+                        sheetMousemove: function (cell, postion, sheetFile, moveState, ctx) {
+                            console.log(cell, postion, sheetFile, moveState, ctx);
+                        },
+                        sheetMouseup: function (cell, postion, sheetFile, moveState, ctx) {
+                            console.log(cell, postion, sheetFile, moveState, ctx);
+                        },
+                        cellAllRenderBefore: function (data, sheetFile, ctx) {
+                            console.info(data, sheetFile, ctx)
+                        },
+                        updated: function (operate) {
+                            console.info(operate)
+                        },
+                        cellUpdateBefore: function (r, c, value, isRefresh) {
+                            console.info('cellUpdateBefore', r, c, value, isRefresh)
+                        },
+                        cellUpdated: function (r, c, oldValue, newValue, isRefresh) {
+                            console.info('cellUpdated', r, c, oldValue, newValue, isRefresh)
+                        },
+                        sheetActivate: function (index, isPivotInitial, isNewSheet) {
+                            console.info(index, isPivotInitial, isNewSheet)
+                        },
+                        rangeSelect: function (index, sheet) {
+                            console.info(index, sheet)
+                        },
+                        commentInsertBefore: function (r, c) {
+                            console.info(r, c)
+                        },
+                        commentInsertAfter: function (r, c, cell) {
+                            console.info(r, c, cell)
+                        },
+                        commentDeleteBefore: function (r, c, cell) {
+                            console.info(r, c, cell)
+                        },
+                        commentDeleteAfter: function (r, c, cell) {
+                            console.info(r, c, cell)
+                        },
+                        commentUpdateBefore: function (r, c, value) {
+                            console.info(r, c, value)
+                        },
+                        commentUpdateAfter: function (r, c, oldCell, newCell) {
+                            console.info(r, c, oldCell, newCell)
+                        },
+                        cellEditBefore: function (range) {
+                            console.info(range)
+                        },
+                        workbookCreateAfter: function (json) {
+                            console.info(json)
+                        },
+                        rangePasteBefore: function (range, data) {
+                            console.info('rangePasteBefore', range, data)
+                            // return false; //Can intercept paste
+                        },
+                    },
+                }
+            }
+
+            luckysheet.create(options);
+
+        })
     </script>
-    <script type="text/javascript" src="../../public/plug-in/jquery-3.1.1.js"></script>
-    <script type="text/javascript" src="../../public/plug-in/bootstrap-3.3.7/js/bootstrap.js"></script>
-    <script type="text/javascript" src="/dist/xspreadsheet.js"></script>
+
 </body>
 
 </html>

@@ -87,7 +87,7 @@ app.use('/api', require('./routers/api'));
 //         console.log('Server is running at http://localhost:8081');
 //     }
 // });
-mongoose.connect('mongodb://localhost:27017/RabbitGod', { useMongoClient: true });
+mongoose.connect('mongodb://localhost:27017/RabbitGod', { useNewUrlParser: true, useUnifiedTopology: true });
 var db = mongoose.connection
 
 db.on('error', console.error.bind(console, '连接错误:'));
